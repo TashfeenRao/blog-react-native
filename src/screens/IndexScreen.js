@@ -12,6 +12,7 @@ import { Context } from '../context/BlogContext';
 
 export default function IndexScreen({ navigation }) {
   const { state, addBlogPost, deleteBlogPost } = useContext(Context);
+  // const storageData = JSON.parse(localStorage.getItem('state'));
   return (
     <View>
       <FlatList

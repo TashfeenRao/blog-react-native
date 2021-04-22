@@ -2,7 +2,18 @@ import createdataContext from './createdataContext';
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'addBlogPost':
+    case 'addBlogPost': {
+      // localStorage.setItem(
+      //   'state',
+      //   JSON.stringify([
+      //     ...state,
+      //     {
+      //       id: Math.floor(Math.random() * 99999),
+      //       title: action.payload.title,
+      //       content: action.payload.content,
+      //     },
+      //   ])
+      // );
       return [
         ...state,
         {
@@ -11,13 +22,26 @@ const reducer = (state, action) => {
           content: action.payload.content,
         },
       ];
+    }
 
     case 'deleteBlogPost':
       return state.filter((blog) => blog.id !== action.payload);
 
+    case 'editBlogPost':
+      return state.map((blogPost) => {
+        return blogPost.id === action.payload.id ? action.payload : blogPost;
+      });
+
     default:
       return state;
   }
+};
+
+const editBlogPost = (dispatch) => {
+  return (id, title, content, callback) => {
+    dispatch({ type: 'editBlogPost', payload: { id, title, content } });
+    if (callback) callback();
+  };
 };
 
 const addBlogPost = (dispatch) => {
@@ -33,8 +57,8 @@ const deleteBlogPost = (dispatch) => {
 
 export const { Context, Provider } = createdataContext(
   reducer,
-  { addBlogPost, deleteBlogPost },
-  []
+  { addBlogPost, deleteBlogPost, editBlogPost },
+  [{ id: 21, title: 'Some post', content: 'some content to be write' }]
 );
 
 //const BlogContext = createContext();
