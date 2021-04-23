@@ -1,19 +1,12 @@
+import jsonServer from '../api/jsonServer';
 import createdataContext from './createdataContext';
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'getAllBlog':
+      return action.payload.data;
+
     case 'addBlogPost': {
-      // localStorage.setItem(
-      //   'state',
-      //   JSON.stringify([
-      //     ...state,
-      //     {
-      //       id: Math.floor(Math.random() * 99999),
-      //       title: action.payload.title,
-      //       content: action.payload.content,
-      //     },
-      //   ])
-      // );
       return [
         ...state,
         {
@@ -37,28 +30,41 @@ const reducer = (state, action) => {
   }
 };
 
+const getBlogPost = (dispatch) => {
+  return async () => {
+    const response = await jsonServer.get('/blogPosts');
+    dispatch({ type: 'getAllBlog', payload: { data: response.data } });
+  };
+};
+
 const editBlogPost = (dispatch) => {
-  return (id, title, content, callback) => {
+  return async (id, title, content, callback) => {
+    await jsonServer.put('/blogPosts/' + id, { title, content });
     dispatch({ type: 'editBlogPost', payload: { id, title, content } });
     if (callback) callback();
   };
 };
 
 const addBlogPost = (dispatch) => {
-  return (title, content, callback) => {
-    dispatch({ type: 'addBlogPost', payload: { title, content } });
-    callback();
+  return async (title, content, callback) => {
+    const response = await jsonServer.post('/blogPosts', { title, content });
+
+    // dispatch({ type: 'addBlogPost', payload: { title, content } });
+    if (callback()) callback();
   };
 };
 
 const deleteBlogPost = (dispatch) => {
-  return (id) => dispatch({ type: 'deleteBlogPost', payload: id });
+  return async (id) => {
+    await jsonServer.delete('/blogPosts/' + id);
+    dispatch({ type: 'deleteBlogPost', payload: id });
+  };
 };
 
 export const { Context, Provider } = createdataContext(
   reducer,
-  { addBlogPost, deleteBlogPost, editBlogPost },
-  [{ id: 21, title: 'Some post', content: 'some content to be write' }]
+  { addBlogPost, deleteBlogPost, editBlogPost, getBlogPost },
+  []
 );
 
 //const BlogContext = createContext();

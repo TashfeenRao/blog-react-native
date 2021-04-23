@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,8 +11,17 @@ import { Feather } from '@expo/vector-icons';
 import { Context } from '../context/BlogContext';
 
 export default function IndexScreen({ navigation }) {
-  const { state, addBlogPost, deleteBlogPost } = useContext(Context);
-  // const storageData = JSON.parse(localStorage.getItem('state'));
+  const { state, addBlogPost, deleteBlogPost, getBlogPost } = useContext(
+    Context
+  );
+
+  useEffect(() => {
+    getBlogPost();
+    navigation.addListener('didFocus', () => {
+      getBlogPost();
+    });
+  }, []);
+
   return (
     <View>
       <FlatList
